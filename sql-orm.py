@@ -13,14 +13,14 @@ base = declarative_base()
 # setting up tables before setting up files but after base is declared
 
 # create a class-based model for the "Artist" table
-class ArtistTable(base):
+class Artist(base):
     __tablename__ = "Artist"
     ArtistId = Column(Integer, primary_key=True)
     Name = Column(String)
 
 
 # create a class-based model for the "Album" table
-class AlbumTable(base):
+class Album(base):
     __tablename__ = "Album"
     AlbumId = Column(Integer, primary_key=True)
     Title = Column(String)
@@ -28,7 +28,7 @@ class AlbumTable(base):
 
 
 # create a class-based model for the "Track" table
-class TrackTable(base):
+class Track(base):
     __tablename__ = "Track"
     TrackId = Column(Integer, primary_key=True)
     Name = Column(String)
@@ -45,15 +45,45 @@ class TrackTable(base):
 # instead of connecting to the database directly, we will ask for a session
 # create a new instance of sessionmaker, then point to our engine (the db)
 # capital S in session var
+
+
 Session = sessionmaker(db)
+
+
 # opens an actual session by calling the Session() subclass defined above
 session = Session()
 
 # creating the database using declerative_base subclass
 base.metadata.create_all(db)
 
-
 # Query 1 - select all records from the "Artist" table
-artists = session.query(Artist)
-for artist in artists:
-    print(artist.ArtistId, artist.Name, sep=" | ")
+# artists = session.query(Artist)
+# for artist in artists:
+#     print(artist.ArtistId, artist.Name, sep=" | ")
+
+# Query 2 - select only the "name" column from the "Artist" table
+# artists = session.query(Artist)
+# for artist in artists:
+#     print(artist.Name)
+
+# Query 3 - select only "Queen" from the "Artist" table
+# artist = session.query(Artist).filter_by(Name="Queen").first()
+# print(artist.ArtistId, artist.Name, sep=" | ")
+
+# Query 4 - select only by "ArtistId" from the "Artist" table
+# artist = session.query(Artist).filter_by(ArtistId=51).first()
+# print(artist.ArtistId, artist.Name, sep=" | ")
+
+# Query 5 - select only the albums with "ArtistId" 51 in the "Album" table
+# albums = session.query(Album).filter_by(ArtistId=51)
+# for album in albums:
+#     print(album.AlbumId, album.Title, album.ArtistId, sep=" | ")
+
+tracks = session.query(Track).filter_by(Composer="Queen")
+for track in tracks:
+    print(
+        track.TrackId, track.Name, track.AlbumId,
+        track.MediaTypeId, track.GenreId, track.Composer,
+        track.Milliseconds, track.Bytes, track.UnitPrice,
+        sep=" | "
+    )
